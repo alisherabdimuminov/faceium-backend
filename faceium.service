@@ -1,0 +1,17 @@
+[Unit]
+Description=faceium
+Requires=faceium.socket
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/home/ali/faceium/backend
+ExecStart=/home/ali/faceium/backend/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/faceium.sock \
+          config.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

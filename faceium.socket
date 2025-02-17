@@ -1,0 +1,8 @@
+[Unit]
+Description=Faceium socket
+
+[Socket]
+ListenStream=/run/faceium.sock
+
+[Install]
+WantedBy=sockets.target
