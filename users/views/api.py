@@ -20,8 +20,8 @@ from ..models import (
 @decorators.api_view(http_method_names=["POST"])
 def check_location(request: HttpRequest):
     data = jsonify(decode(request.data.get("data")))
-    latitude = 39.672159
-    longitude = 66.922284
+    latitude = data.get("latitude")
+    longitude = data.get("longitude")
 
     areas = Area.objects.filter(is_active=True)
 
