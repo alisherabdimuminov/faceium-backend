@@ -36,7 +36,7 @@ from .views.head import (
 
 urlpatterns = [
     path("auth/login/", login,),
-    path("auth/profile", profile,),
+    path("auth/profile/", profile,),
 
     path("location/", check_location,),
     path("handle/", check_handle,),
