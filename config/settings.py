@@ -103,7 +103,7 @@ REST_FRAMEWORK = {
 # csrf
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ["https://api.fc.uzfi.uz", "http://localhost:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://faceium.uz", "http://localhost:8000"]
 if not DEBUG:
     SESSION_COOKIE_DOMAIN = ".fc.uzfi.uz"
     CSRF_COOKIE_DOMAIN = ".fc.uzfi.uz"
