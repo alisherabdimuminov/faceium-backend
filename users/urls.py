@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views.api import check_location, check_handle, check_face
-from .views.auth import login
+from .views.auth import login, profile
 from .views.admin import (
     get_stats,
     get_users,
@@ -36,6 +36,7 @@ from .views.head import (
 
 urlpatterns = [
     path("auth/login/", login,),
+    path("auth/profile", profile,),
 
     path("location/", check_location,),
     path("handle/", check_handle,),
