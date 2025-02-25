@@ -29,6 +29,7 @@ def login(request: HttpRequest):
         })
     
     user = user.first()
+    print(data)
 
     if not user.check_password(password):
         return Response({
@@ -53,9 +54,7 @@ def login(request: HttpRequest):
         "code": "200",
         "data": encode(json.dumps({
             "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "org": user.org.name if user.org else "",
+            "full_name": user.full_name,
             "department": user.department.name if user.department else "",
             "position": user.position,
             "role": user.role,
@@ -64,7 +63,7 @@ def login(request: HttpRequest):
     })
 
 
-@decorators.api_view(http_method_names=["POST"])
+@decorators.api_view(http_method_names=["GET"])
 @decorators.authentication_classes(authentication_classes=[authentication.TokenAuthentication])
 @decorators.permission_classes(permission_classes=[permissions.IsAuthenticated])
 def profile(request: HttpRequest):
@@ -75,9 +74,7 @@ def profile(request: HttpRequest):
         "code": "200",
         "data": encode(json.dumps({
             "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "org": user.org.name if user.org else "",
+            "full_name": user.full_name,
             "department": user.department.name if user.department else "",
             "position": user.position,
             "role": user.role,

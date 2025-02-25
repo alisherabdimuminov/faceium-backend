@@ -8,8 +8,9 @@ from .manager import UserManager
 
 ROLE = (
     ("admin", "Admin"),
+    ("staff", "Mutaxasis kadr"),
+    ("analysis", "Mutaxasis axborot tahlil"),
     ("employee", "Xodim"),
-    ("head", "Boshliq"),
 )
 
 GENDER = (
@@ -33,22 +34,6 @@ OUTPUT_STATUS = (
 )
     
 
-class Organization(models.Model):
-    uuid = models.CharField(max_length=100, default=uuid4, editable=False)
-    name = models.CharField(max_length=1000)
-    description = models.TextField(null=True, blank=True)
-    max_users = models.IntegerField(default=10)
-
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    def count_users(self):
-        return User.objects.filter(org=self).count()
-
-    def __str__(self):
-        return self.name
-    
-
 class Branch(models.Model):
     uuid = models.CharField(max_length=100, default=uuid4, editable=False)
     name = models.CharField(max_length=1000)
@@ -58,7 +43,6 @@ class Branch(models.Model):
 
 
 class Department(models.Model):
-    org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tashkiloti")
     name = models.CharField(max_length=1000, verbose_name="Nomi")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -70,7 +54,6 @@ class Department(models.Model):
    
 
 class WorkingTime(models.Model):
-    org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tashkiloti")
     name = models.CharField(max_length=1000, verbose_name="Nomi")
     start = models.TimeField(max_length=1000, verbose_name="Ish boshlanish vaqti")
     end = models.TimeField(max_length=1000, verbose_name="Ish tugash vaqti")
@@ -105,16 +88,15 @@ class Question(models.Model):
 
 
 class Area(models.Model):
-    org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tashkiloti")
     name = models.CharField(max_length=100, verbose_name="Nomi")
-    alphax = models.DecimalField(max_digits=10, decimal_places=6)
-    alphay = models.DecimalField(max_digits=10, decimal_places=6)
-    betax = models.DecimalField(max_digits=10, decimal_places=6)
-    betay = models.DecimalField(max_digits=10, decimal_places=6)
-    gammax = models.DecimalField(max_digits=10, decimal_places=6)
-    gammay = models.DecimalField(max_digits=10, decimal_places=6)
-    deltax = models.DecimalField(max_digits=10, decimal_places=6)
-    deltay = models.DecimalField(max_digits=10, decimal_places=6)
+    coord1 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord2 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord3 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord4 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord5 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord6 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord7 = models.DecimalField(max_digits=10, decimal_places=6)
+    coord8 = models.DecimalField(max_digits=10, decimal_places=6)
     is_active = models.BooleanField(default=True)
 
     created = models.DateTimeField(auto_now_add=True)
@@ -127,12 +109,9 @@ class Area(models.Model):
 class User(AbstractUser):
     uuid = models.CharField(max_length=100, default=uuid4)
     username = models.CharField(max_length=100, unique=True, verbose_name="Foydalanuvchi nomi")
-    first_name = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Ismi")
-    last_name = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Familiyasi")
-    middle_name = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Sharifi")
+    full_name = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Ismi")
     role = models.CharField(max_length=20, choices=ROLE, verbose_name="Roli")
 
-    org = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tashkiloti")
     branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, blank=True)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Bo'limi")
     position = models.CharField(max_length=1000, null=True, blank=True, verbose_name="Lavozimo")
@@ -197,7 +176,6 @@ class Control(models.Model):
 
 
 class Holiday(models.Model):
-    org = models.ForeignKey(Organization, on_delete=models.CASCADE, verbose_name="Tashkiloti")
     name = models.CharField(max_length=100)
     start = models.DateField()
     end = models.DateField()
@@ -234,4 +212,29 @@ class History(models.Model):
 
     def __str__(self):
         return self.model
+
+
+class Task(models.Model):
+    name = models.CharField(max_length=1000)
+    file = models.FileField(upload_to="files/tasks", null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+    
+
+class Submit(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file = models.FileField(upload_to="files/submits", null=True, blank=True)
+    status = models.CharField(max_length=100, choices=(("created", "Yaratilgan"), ("progress", "Jarayonda"), ("accepted", "Qabul qilindi"), ("rejected", "Rad etildi")), default="created")
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.status
 

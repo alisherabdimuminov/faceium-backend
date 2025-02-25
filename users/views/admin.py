@@ -17,8 +17,11 @@ from ..models import (
     Test,
     Question,
     Set,
+    Task,
+    Submit,
 )
 from ..serializers import (
+    AddTestSerializer,
     UserSerializer, 
     AreaSerializer,
     DepartmentSerializer,
@@ -29,6 +32,8 @@ from ..serializers import (
     TestSerializer,
     QuestionSerializer,
     SetSerializer,
+    TaskSerializer,
+    SubmitSerializer,
 )
 
 
@@ -67,8 +72,10 @@ def get_stats(request: HttpRequest):
 
 @decorators.api_view(http_method_names=["GET"])
 def get_users(request: HttpRequest):
-    users_obj = User.objects.exclude(role="admin", is_active=False)
+    users_obj = User.objects.exclude(role="admin")
+    print(users_obj)
     users_serializer = UserSerializer(users_obj, many=True).data
+    print(users_serializer)
     return Response({
         "status": "success",
         "code": "200",
@@ -93,13 +100,13 @@ def add_user(request: HttpRequest):
     user_serializer = AddUserSerializer(data=request.data)
 
     image = request.FILES.get("image")
-    print(image)
 
     if user_serializer.is_valid():
         user = user_serializer.save()
+        user.set_password("0987654321xaxa")
+        user.save()
         if image:
             user.image = image
-            user.set_password("123")
             user.save()
         return Response({
             "status": "success",
@@ -323,6 +330,28 @@ def get_tests(request: HttpRequest):
     })
 
 
+@decorators.api_view(http_method_names=["POST"])
+def add_test(request: HttpRequest):
+    test = AddTestSerializer(data=request.data)
+    if test.is_valid():
+        test.save()
+        return Response({
+            "status": "success",
+            "code": "200",
+            "data": None
+        })
+    else:
+        errors = test.errors
+        errors = {key: value[0] for key, value in errors.items()}
+        return Response({
+            "status": "error",
+            "code": "400",
+            "data": {
+                "errors": errors
+            }
+        })
+
+
 @decorators.api_view(http_method_names=["GET"])
 def get_sets(request: HttpRequest):
     sets_obj = Set.objects.all()
@@ -344,3 +373,38 @@ def add_set(request: HttpRequest):
         "data": None
     })
 
+
+@decorators.api_view(http_method_names=["GET"])
+def get_tasks(request: HttpRequest):
+    tasks_obj = Task.objects.all()
+    tasks_serializer = TaskSerializer(tasks_obj, many=True).data
+    return Response({
+        "status": "success",
+        "code": "200",
+        "data": encode(json.dumps(tasks_serializer))
+    })
+
+@decorators.api_view(http_method_names=["POST"])
+def add_task(request: HttpRequest):
+    name = request.data.get("name")
+    file = request.FILES.get("file")
+    user = request.data.get("user")
+    user = User.objects.get(id=user)
+    task = Task.objects.create(name=name, file=file, user=user)
+    return Response({
+        "status": "success",
+        "code": "200",
+        "data": None
+    })
+
+
+@decorators.api_view(http_method_names=["GET"])
+def get_my_tasks(request: HttpRequest):
+    user = request.user
+    tasks_obj = Task.objects.filter(user=user)
+    tasks_serializer = TaskSerializer(tasks_obj, many=True).data
+    return Response({
+        "status": "success",
+        "code": "200",
+        "data": encode(json.dumps(tasks_serializer))
+    })

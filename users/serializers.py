@@ -10,6 +10,8 @@ from .models import (
     Question,
     Test,
     Set,
+    Task,
+    Submit,
 )
 
 
@@ -30,7 +32,7 @@ class AreaSerializer(serializers.ModelSerializer):
     id = serializers.CharField()
     class Meta:
         model = Area
-        fields = ("id", "name", "alphax", "alphay", "betax", "betay", "gammax", "gammay", "deltax", "deltay", )
+        fields = ("id", "name", "coord1", "coord2", "coord3", "coord4", "coord5", "coord6", "coord7", "coord8", )
 
 
 class WorkingTimeSerializer(serializers.ModelSerializer):
@@ -67,7 +69,7 @@ class UserSerializer(serializers.ModelSerializer):
     working_time = WorkingTimeSerializer(WorkingTime)
     class Meta:
         model = User
-        fields = ("id", "uuid", "username", "first_name", "last_name", "middle_name", 
+        fields = ("id", "uuid", "username", "full_name",  
                   "role", "branch", "department", "position", "gender", "working_time",
                   "birth_date", "image", "country", "city", "town", "address", "phone")
 
@@ -75,7 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
 class AddUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "first_name", "last_name", "middle_name", 
+        fields = ("username", "full_name", "role",
                   "branch", "department", "position", "gender", "working_time",
                   "birth_date", "image", "country", "city", "town", "address", "phone")    
 
@@ -86,6 +88,12 @@ class TestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Test
         fields = ("name", "user", "set", "questions_count", "passing_score", "start", "end", "duration", "status", )
+
+
+class AddTestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Test
+        fields = ("name", "user", "set", "passing_score", "duration", "status", )
 
 
 class ControlsSerializer(serializers.ModelSerializer):
@@ -160,4 +168,34 @@ class ControlsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ("username", "first_name", "last_name", "branch", "department", "input_status", "input_area", "input_time", "output_status", "output_area", "output_time", )
+        fields = ("username", "full_name", "branch", "department", "input_status", "input_area", "input_time", "output_status", "output_area", "output_time", )
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    user = UserSerializer(User)
+    status = serializers.SerializerMethodField("status_func")
+    submit = serializers.SerializerMethodField("submit_func")
+
+    def status_func(self, obj):
+        submits = Submit.objects.filter(task=obj)
+        if submits.exists():
+            submit = submits.last()
+            return submit.status
+        return "notsubmitted"
+    
+    def submit_func(self, obj):
+        submits = Submit.objects.filter(task=obj)
+        if submits.exists():
+            submit = submits.last()
+            return submit.file.url
+        return None
+
+    class Meta:
+        model = Task
+        fields = ("id", "name", "user", "file", "submit", "status", "created", "updated", )
+
+
+class SubmitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Submit
+        fields = ("task", "user", "file", "created", "updated", "status", )

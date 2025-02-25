@@ -11,11 +11,27 @@ from .models import (
     History,
     User,
     WorkingTime,
-    Organization,
     Question,
     Test,
     Set,
+    Task,
+    Submit,
 )
+
+
+
+@admin.register(Task)
+class TaskModelAdmin(admin.ModelAdmin):
+    list_display = ["name", "user", "created", "updated", ]
+    search_fields = ["name", ]
+    list_filter = ["user", ]
+
+
+@admin.register(Submit)
+class SubmitModelAdmin(admin.ModelAdmin):
+    list_display = ["task", "user", "created", "updated", "status", ]
+    search_fields = ["task", "user", ]
+    list_filter = ["status", ]
 
 
 @admin.register(Set)
@@ -33,17 +49,10 @@ class TestModelAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "user", "set", "questions_count", "status"]
     search_fields = ["name",]
 
-
-@admin.register(Organization)
-class OrganizationModelAdmin(admin.ModelAdmin):
-    list_display = ["name", "description", "max_users", "count_users", "created", ]
-
-
 @admin.register(Area)
 class AreaModelAdmin(admin.ModelAdmin):
-    list_display = ["org", "name", "alphax", "alphay", "betax", "betay", "gammax", "gammay", "deltax", "deltay", ]
+    list_display = ["name", "coord1", "coord2", "coord3", "coord4", "coord5", "coord6", "coord7", "coord8", ]
     search_fields = ["name"]
-    list_filter = ["org"]
 
 
 @admin.register(Branch)
@@ -58,8 +67,7 @@ class ControlModelAdmin(admin.ModelAdmin):
 
 @admin.register(Department)
 class DepartmentModelAdmin(admin.ModelAdmin):
-    list_display = ["org", "name", "created", "updated", ]
-    list_filter = ["org"]
+    list_display = ["name", "created", "updated", ]
 
 
 @admin.register(History)
@@ -69,31 +77,30 @@ class HistoryModelAdmin(admin.ModelAdmin):
 
 @admin.register(WorkingTime)
 class WorkingTimeModelAdmin(admin.ModelAdmin):
-    list_display = ["org", "name", "start", "end"]
-    list_filter = ["org"]
+    list_display = ["name", "start", "end"]
 
 
 @admin.register(User)
 class UserModelAdmin(UserAdmin):
     add_form = UserCreationForm
     form = UserChangeForm
-    list_display = ["org", "username", "first_name", "last_name", "middle_name", "department", "position", "working_time", ]
+    list_display = ["username", "full_name", "department", "position", "working_time", ]
     search_fields = ["username", "first_name", "last_name", "middle_name", ]
-    list_filter = ["org", "department", "working_time"]
+    list_filter = ["department", "working_time"]
     model = User
     fieldsets = (
         ("Ma'lumotlar", {
-            "fields": ("uuid", "username", "first_name", "last_name", "middle_name", "password", "gender", "birth_date", "image", )
+            "fields": ("uuid", "username", "full_name", "role", "password", "gender", "birth_date", "image", )
         }), 
         ("Ish va yashash joyi", {
-            "fields": ("org", "branch", "department", "position", "working_time", "country", "city", "town", "address", "phone", )
+            "fields": ("branch", "department", "position", "working_time", "country", "city", "town", "address", "phone", )
         })
     )
     add_fieldsets = (
         ("Yangi foydalanuvchi qo'shish", {
-            "fields": ("username", "password1", "password2", "first_name", "last_name", "middle_name", )
+            "fields": ("username", "role", "password1", "password2", "full_name", )
         }), 
         ("Ish va yashash joyi", {
-            "fields": ("org", "branch", "department", "position", "working_time", "country", "city", "town", "address", "phone", )
+            "fields": ("branch", "department", "position", "working_time", "country", "city", "town", "address", "phone", )
         })
     )

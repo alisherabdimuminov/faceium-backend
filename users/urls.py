@@ -25,9 +25,14 @@ from .views.admin import (
     get_report,
 
     get_tests,
+    add_test,
 
     get_sets,
     add_set,
+
+    get_tasks,
+    add_task,
+    get_my_tasks,
 )
 from .views.head import (
     get_employees,
@@ -67,7 +72,12 @@ urlpatterns = [
     path("reports/<str:bid>/<str:did>/", get_report, ),
 
     path("tests/", get_tests, ),
+    path("tests/add/", add_test, ),
 
     path("sets/", get_sets, ),
     path("sets/add", add_set, ),
+
+    path("tasks/", get_tasks, ),
+    path("tasks/add/", add_task, ),
+    path("tasks/my/", get_my_tasks, ),
 ]
