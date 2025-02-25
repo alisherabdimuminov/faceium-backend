@@ -152,6 +152,7 @@ def check_face(request: HttpRequest):
                             "data": "Davomatdan o'tdingiz."
                         })
                     else:
+                        print("else verify", verify)
                         if not verify.get("img2").get("right_eye") or not verify.get("img2").get("left_eye"):
                             control.input_status = "failed"
                             control.save()
@@ -205,6 +206,7 @@ def check_face(request: HttpRequest):
                             "data": "Davomatdan o'tdingiz."
                         })
                     else:
+                        print("else verify", verify)
                         if not verify.get("img2").get("right_eye") or not verify.get("img2").get("left_eye"):
                             control.output_status = "failed"
                             control.save()
