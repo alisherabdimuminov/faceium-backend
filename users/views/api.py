@@ -187,7 +187,6 @@ def check_face(request: HttpRequest):
                 cause = ""
                 try:
                     print("try")
-                    from deepface import DeepFace
                     verify = DeepFace.verify(
                         img1_path=user.image.path,
                         img2_path=control.input_image.path,
@@ -250,7 +249,6 @@ def check_face(request: HttpRequest):
                 print(control.input_image.path)
                 try:
                     print("try")
-                    from deepface import DeepFace
                     verify = DeepFace.verify(
                         img1_path=user.image.path,
                         img2_path=control.input_image.path,
