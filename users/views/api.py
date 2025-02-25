@@ -1,5 +1,6 @@
 import json
 import base64
+from deepface import DeepFace
 from datetime import datetime
 from django.http import HttpRequest
 from shapely.geometry import Point, Polygon
@@ -129,7 +130,6 @@ def check_face(request: HttpRequest):
                     control.save()
                     cause = ""
                     try:
-                        from deepface import DeepFace
                         verify = DeepFace.verify(
                             img1_path=user.image.path,
                             img2_path=control.input_image.path,
