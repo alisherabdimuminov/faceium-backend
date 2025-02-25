@@ -129,61 +129,61 @@ def check_face(request: HttpRequest):
                     control.input_image.save(file_name, data, True)
                     control.save()
                     cause = ""
-                    try:
-                        verify = DeepFace.verify(
-                            img1_path=user.image.path,
-                            img2_path=control.input_image.path,
-                            anti_spoofing=True
-                        )
+                    # try:
+                    verify = DeepFace.verify(
+                        img1_path=user.image.path,
+                        img2_path=control.input_image.path,
+                        anti_spoofing=True
+                    )
 
-                        print(verify)
+                    print(verify)
 
-                        if verify.get("verified"):
-                            if (now.hour > user.working_time.start.hour or (now.hour == user.working_time.start.hour and now.minute > user.working_time.start.minute)):
-                                control.input_status = "late"
-                                control.save()
-                            else:
-                                control.input_status = "arrived"
-                                control.save()
-
-                            return Response({
-                                "status": "success",
-                                "code": "200",
-                                "data": "Davomatdan o'tdingiz."
-                            })
-                        else:
-                            if not verify.get("img2").get("right_eye") or not verify.get("img2").get("left_eye"):
-                                control.input_status = "failed"
-                                control.save()
-                                return Response({
-                                    "status": "error",
-                                    "code": "120",
-                                    "data": "Yuzni aniqlab bo'lmadi.",
-                                })
-                            else:
-                                control.delete()
-                                return Response({
-                                    "status": "error",
-                                    "code": "130",
-                                    "data": "Yuzlar mos kelmadi / Boshqa xodimni ID sidan foydalanayabsiz."
-                                })
-                    except Exception as e:
-                        cause = str(e.__cause__)
-
-                        if cause == "Spoof detected in given image.":
-                            control.input_status = "crash"
+                    if verify.get("verified"):
+                        if (now.hour > user.working_time.start.hour or (now.hour == user.working_time.start.hour and now.minute > user.working_time.start.minute)):
+                            control.input_status = "late"
                             control.save()
-                            user.is_active = False
-                            user.save()
+                        else:
+                            control.input_status = "arrived"
+                            control.save()
 
+                        return Response({
+                            "status": "success",
+                            "code": "200",
+                            "data": "Davomatdan o'tdingiz."
+                        })
+                    else:
+                        if not verify.get("img2").get("right_eye") or not verify.get("img2").get("left_eye"):
+                            control.input_status = "failed"
+                            control.save()
                             return Response({
                                 "status": "error",
-                                "code": "140",
-                                "data": "Kechirasiz, siz rasm, video orqali o'tishga uringaningiz uchun tizimdan faolsizlantirildingiz."
+                                "code": "120",
+                                "data": "Yuzni aniqlab bo'lmadi.",
                             })
-                        print("E", e.__cause__)
-                        print("E", e.__context__)
-                        print("E", e)
+                        else:
+                            control.delete()
+                            return Response({
+                                "status": "error",
+                                "code": "130",
+                                "data": "Yuzlar mos kelmadi / Boshqa xodimni ID sidan foydalanayabsiz."
+                            })
+                    # except Exception as e:
+                    #     cause = str(e.__cause__)
+
+                    #     if cause == "Spoof detected in given image.":
+                    #         control.input_status = "crash"
+                    #         control.save()
+                    #         user.is_active = False
+                    #         user.save()
+
+                    #         return Response({
+                    #             "status": "error",
+                    #             "code": "140",
+                    #             "data": "Kechirasiz, siz rasm, video orqali o'tishga uringaningiz uchun tizimdan faolsizlantirildingiz."
+                    #         })
+                    #     print("E", e.__cause__)
+                    #     print("E", e.__context__)
+                    #     print("E", e)
             # output
             else:
                 cause = ""
