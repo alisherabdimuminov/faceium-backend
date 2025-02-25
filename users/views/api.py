@@ -136,6 +136,8 @@ def check_face(request: HttpRequest):
                             anti_spoofing=True
                         )
 
+                        print(verify)
+
                         if verify.get("verified"):
                             if (now.hour > user.working_time.start.hour or (now.hour == user.working_time.start.hour and now.minute > user.working_time.start.minute)):
                                 control.input_status = "late"
