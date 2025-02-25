@@ -23,15 +23,18 @@ def check_location(request: HttpRequest):
     latitude = data.get("latitude")
     longitude = data.get("longitude")
 
+    print(latitude, longitude)
+
     areas = Area.objects.filter(is_active=True)
 
     for area in areas:
         polygon = Polygon([
-            (area.alphax, area.alphay),
-            (area.betax, area.betay),
-            (area.gammax, area.gammay),
-            (area.deltax, area.deltay),
+            (area.coord1, area.coord2),
+            (area.coord3, area.coord4),
+            (area.coord5, area.coord6),
+            (area.coord7, area.coord8),
         ])
+        print(polygon)
 
         coordinate = Point(latitude, longitude)
 
