@@ -179,9 +179,9 @@ def check_face(request: HttpRequest):
                                 "code": "140",
                                 "data": "Kechirasiz, siz rasm, video orqali o'tishga uringaningiz uchun tizimdan faolsizlantirildingiz."
                             })
-                        print(e.__cause__)
-                        print(e.__context__)
-                        print(e)
+                        print("E", e.__cause__)
+                        print("E", e.__context__)
+                        print("E", e)
             # output
             else:
                 cause = ""
@@ -231,9 +231,9 @@ def check_face(request: HttpRequest):
                             "code": "140",
                             "data": "Kechirasiz, siz rasm, video orqali o'tishga uringaningiz uchun tizimdan faolsizlantirildingiz."
                         })
-                    print(e.__context__)
-                    print(e.__cause__)
-                    print(e)
+                    print("EE", e.__context__)
+                    print("EE", e.__cause__)
+                    print("EE", e)
         else:
             # input
             if now.hour < user.working_time.start.hour + 4:
@@ -301,7 +301,7 @@ def check_face(request: HttpRequest):
                             "data": "Kechirasiz, siz rasm, video orqali o'tishga uringaningiz uchun tizimdan faolsizlantirildingiz."
                         })
                     else:
-                        print(e)
+                        print("Error", e)
             # output
             else:
                 return Response({
