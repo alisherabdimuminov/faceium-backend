@@ -14,23 +14,22 @@ from .models import (
     Question,
     Test,
     Set,
-    Task,
+    Application,
     Submit,
 )
 
 
 
-@admin.register(Task)
+@admin.register(Application)
 class TaskModelAdmin(admin.ModelAdmin):
-    list_display = ["name", "user", "created", "updated", ]
-    search_fields = ["name", ]
-    list_filter = ["user", ]
+    list_display = ["number", "output_number", "created", "updated", ]
+    search_fields = ["number", ]
 
 
 @admin.register(Submit)
 class SubmitModelAdmin(admin.ModelAdmin):
-    list_display = ["task", "user", "created", "updated", "status", ]
-    search_fields = ["task", "user", ]
+    list_display = ["application", "user", "created", "updated", "status", ]
+    search_fields = ["application", "user", ]
     list_filter = ["status", ]
 
 

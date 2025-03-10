@@ -17,7 +17,7 @@ from ..models import (
     Test,
     Question,
     Set,
-    Task,
+    Application,
     Submit,
 )
 from ..serializers import (
@@ -32,7 +32,7 @@ from ..serializers import (
     TestSerializer,
     QuestionSerializer,
     SetSerializer,
-    TaskSerializer,
+    ApplicationSerializer,
     SubmitSerializer,
 )
 
@@ -375,22 +375,21 @@ def add_set(request: HttpRequest):
 
 
 @decorators.api_view(http_method_names=["GET"])
-def get_tasks(request: HttpRequest):
-    tasks_obj = Task.objects.all()
-    tasks_serializer = TaskSerializer(tasks_obj, many=True).data
+def get_applications(request: HttpRequest):
+    applications_obj = Application.objects.all()
+    applications_serializer = ApplicationSerializer(applications_obj, many=True).data
     return Response({
         "status": "success",
         "code": "200",
-        "data": encode(json.dumps(tasks_serializer))
+        "data": encode(json.dumps(applications_serializer))
     })
 
 @decorators.api_view(http_method_names=["POST"])
-def add_task(request: HttpRequest):
-    name = request.data.get("name")
+def add_application(request: HttpRequest):
     file = request.FILES.get("file")
-    user = request.data.get("user")
-    user = User.objects.get(id=user)
-    task = Task.objects.create(name=name, file=file, user=user)
+
+    print(file.name)
+
     return Response({
         "status": "success",
         "code": "200",
@@ -399,12 +398,12 @@ def add_task(request: HttpRequest):
 
 
 @decorators.api_view(http_method_names=["GET"])
-def get_my_tasks(request: HttpRequest):
+def get_my_applications(request: HttpRequest):
     user = request.user
-    tasks_obj = Task.objects.filter(user=user)
-    tasks_serializer = TaskSerializer(tasks_obj, many=True).data
+    applications_obj = Application.objects.filter(user=user)
+    applications_serializer = ApplicationSerializer(applications_obj, many=True).data
     return Response({
         "status": "success",
         "code": "200",
-        "data": encode(json.dumps(tasks_serializer))
+        "data": encode(json.dumps(applications_serializer))
     })

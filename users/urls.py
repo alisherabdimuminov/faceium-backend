@@ -30,9 +30,9 @@ from .views.admin import (
     get_sets,
     add_set,
 
-    get_tasks,
-    add_task,
-    get_my_tasks,
+    get_applications,
+    add_application,
+    get_my_applications,
 )
 from .views.head import (
     get_employees,
@@ -77,7 +77,7 @@ urlpatterns = [
     path("sets/", get_sets, ),
     path("sets/add", add_set, ),
 
-    path("tasks/", get_tasks, ),
-    path("tasks/add/", add_task, ),
-    path("tasks/my/", get_my_tasks, ),
+    path("tasks/", get_applications, ),
+    path("tasks/add/", add_application, ),
+    path("tasks/my/", get_my_applications, ),
 ]

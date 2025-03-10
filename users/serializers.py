@@ -10,7 +10,7 @@ from .models import (
     Question,
     Test,
     Set,
-    Task,
+    Application,
     Submit,
 )
 
@@ -171,31 +171,31 @@ class ControlsSerializer(serializers.ModelSerializer):
         fields = ("username", "full_name", "branch", "department", "input_status", "input_area", "input_time", "output_status", "output_area", "output_time", )
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class ApplicationSerializer(serializers.ModelSerializer):
     user = UserSerializer(User)
     status = serializers.SerializerMethodField("status_func")
     submit = serializers.SerializerMethodField("submit_func")
 
     def status_func(self, obj):
-        submits = Submit.objects.filter(task=obj)
+        submits = Submit.objects.filter(application=obj)
         if submits.exists():
             submit = submits.last()
             return submit.status
         return "notsubmitted"
     
     def submit_func(self, obj):
-        submits = Submit.objects.filter(task=obj)
+        submits = Submit.objects.filter(application=obj)
         if submits.exists():
             submit = submits.last()
             return submit.file.url
         return None
 
     class Meta:
-        model = Task
-        fields = ("id", "name", "user", "file", "submit", "status", "created", "updated", )
+        model = Application
+        fields = ("id", "user", "number", "output_number", "short_description", "description", "type", "sender", "status", "submit", "entered", "exited", "executed", )
 
 
 class SubmitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submit
-        fields = ("task", "user", "file", "created", "updated", "status", )
+        fields = ("application", "user", "file", "created", "updated", "status", )

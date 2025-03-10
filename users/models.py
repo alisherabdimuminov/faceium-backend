@@ -32,6 +32,14 @@ OUTPUT_STATUS = (
     ("crash", "Xatolik"),
     ("failed", "Muvaffaqiyatisz"),
 )
+
+APPLICATION_STATUS = (
+    ("given", "Berilgan"),
+    ("process", "Ko'rib chiqilmoqda"),
+    ("failed", "Rad etilgan"),
+    ("accepted", "Qabul qilingan"),
+    ("late", "Kech qolgan"),
+)
     
 
 class Branch(models.Model):
@@ -214,20 +222,29 @@ class History(models.Model):
         return self.model
 
 
-class Task(models.Model):
-    name = models.CharField(max_length=1000)
-    file = models.FileField(upload_to="files/tasks", null=True, blank=True)
+class Application(models.Model):
+    number = models.CharField(max_length=1000)
+    output_number = models.CharField(max_length=1000)
+    short_description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    type = models.CharField(max_length=1000)
+    sender = models.CharField(max_length=1000)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    entered = models.DateField(null=True, blank=True)
+    exited = models.DateField(null=True, blank=True)
+    executed = models.DateField(null=True, blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return self.number
     
 
 class Submit(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(upload_to="files/submits", null=True, blank=True)
     status = models.CharField(max_length=100, choices=(("created", "Yaratilgan"), ("progress", "Jarayonda"), ("accepted", "Qabul qilindi"), ("rejected", "Rad etildi")), default="created")
